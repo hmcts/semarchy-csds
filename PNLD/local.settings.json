@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "SemarchyLoadURL": "http://localhost:8088/semarchy/api/rest/loads/CSDS",
+    "SemarchyXSDURL": "http://localhost:8088/semarchy/api/rest/named-query/CSDS/ExportPNLDXSD/GD",
+    "SemarchyOffenceRevisionNamedQueryURL": "http://localhost:8088/semarchy/api/rest/named-query/CSDS/GetOffenceRevisionPNLD/GD",
+    "SemarchyGetMenusNamedQueryURL": "http://localhost:8088/semarchy/api/rest/named-query/CSDS/GetMenusPNLD/GD",
+    "SemarchyGetReleasePackageNamedQueryURL": "http://localhost:8088/semarchy/api/rest/named-query/CSDS/GetReleasePackagePNLD/GD",
+    "SemarchyGetOffenceRevisionBatchNamedQueryURL": "http://localhost:8088/semarchy/api/rest/named-query/CSDS/GetOffenceRevisionBatch/GD",
+    "SemarchyAPIKey": "ro4S1ff.5gPZ2QWwapfqsFqQMtkgqMlJf8TqmpS6n3G"
+  }
+}

@@ -1,0 +1,75 @@
+{
+    "parents": [
+        {
+            "element_path": "//document",
+            "columns": {
+                "pnldref": "pnldref"
+            }
+        },
+        {
+            "element_path": "//english",
+            "columns": {
+                "title": "title",
+                "legislation": "legislation",
+                "sow_raw": "standardoffencewording",
+                "sof_raw": "standardstatementoffacts",
+                "notes": "notes"
+            }
+        },
+        {
+            "element_path": "//welsh",
+            "columns": {
+                "welshstandardoffencewording": "welshstandardoffencewording",
+                "welshstandardstatementoffacts": "welshstandardstatementoffacts",
+                "welshoffencetitle": "welshoffencetitle",
+                "welshlegislation": "welshlegislation"
+            }
+        },
+        {
+            "element_path": "//codes",
+            "columns": {
+                "cjsoffencecode": "cjsoffencecode",
+                "recordable": "recordableonpncindicator/description",
+                "reportable": "notifiabletoho/description",
+                "dvlacode": "dvlacode/code",
+                "hoclassification": "hoclassification",
+                "disqualificationclass": "disqualificationclass/code",
+                "minpenaltypoints": "minpenaltypoints",
+                "maxpenaltypoints": "maxpenaltypoints"
+
+            }
+        },
+        {
+            "element_path": "//ancillary",
+            "columns": {
+                "offencestartdate": "offencestartdate",
+                "offenceenddate": "offenceenddate",
+                "dateoflastupdate": "dateoflastupdate"
+
+            }
+        },
+        {
+            "element_path": "//libra",
+            "columns": {
+                "custodialindicator": "custodialindicator/code",
+                "maxcustodialsentencelengthmagct": "maxcustodialsentencelengthmagct",
+                "maxcustodialsentenceunitmagct": "maxcustodialsentenceunitmagct/code",
+                "maxfinetypemagct_code": "maxfinetypemagct/code",
+                "maxfinetypemagct_desc": "maxfinetypemagct/description",
+                "maxfinemagct": "maxfinemagct",
+                "miscode": "miscode/code",
+                "cjsoffencecategory": "cjsoffencecategory/code",
+                "hoproceedingscode": "hoproceedingscode"
+
+            }
+        },
+        {
+            "element_path": "//other",
+            "columns": {
+                "modeoftrial": "modeoftrial/code",
+                "timelimitforprosecutions": "timelimitforprosecutions"
+
+            }
+        }
+    ]
+}
