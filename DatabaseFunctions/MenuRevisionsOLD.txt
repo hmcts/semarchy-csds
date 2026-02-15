@@ -1,0 +1,94 @@
+-- DROP FUNCTION csds.fn_menu_status_from_revisions(numeric);
+
+CREATE OR REPLACE FUNCTION csds.fn_menu_status_from_revisions(p_menu_id numeric)
+ RETURNS text
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    v_has_active_revision boolean;
+    v_menu_status text;
+BEGIN
+    /*
+      Check whether any offence revision references this menu
+      in ANY f_menu column and is not Inactive
+    */
+    SELECT EXISTS (
+        SELECT 1
+        FROM csds.gd_offence_revision gor
+        WHERE (
+            gor.f_menu_01 = p_menu_id OR
+            gor.f_menu_02 = p_menu_id OR
+            gor.f_menu_03 = p_menu_id OR
+            gor.f_menu_04 = p_menu_id OR
+            gor.f_menu_05 = p_menu_id OR
+            gor.f_menu_06 = p_menu_id OR
+            gor.f_menu_07 = p_menu_id OR
+            gor.f_menu_08 = p_menu_id OR
+            gor.f_menu_09 = p_menu_id OR
+            gor.f_menu_10 = p_menu_id OR
+            gor.f_menu_11 = p_menu_id OR
+            gor.f_menu_12 = p_menu_id OR
+            gor.f_menu_13 = p_menu_id OR
+            gor.f_menu_14 = p_menu_id OR
+            gor.f_menu_15 = p_menu_id OR
+            gor.f_menu_16 = p_menu_id OR
+            gor.f_menu_17 = p_menu_id OR
+            gor.f_menu_18 = p_menu_id OR
+            gor.f_menu_19 = p_menu_id OR
+            gor.f_menu_20 = p_menu_id OR
+            gor.f_menu_21 = p_menu_id OR
+            gor.f_menu_22 = p_menu_id OR
+            gor.f_menu_23 = p_menu_id OR
+            gor.f_menu_24 = p_menu_id OR
+            gor.f_menu_25 = p_menu_id OR
+            gor.f_menu_26 = p_menu_id OR
+            gor.f_menu_27 = p_menu_id OR
+            gor.f_menu_28 = p_menu_id OR
+            gor.f_menu_29 = p_menu_id OR
+            gor.f_menu_30 = p_menu_id OR
+            gor.f_menu_31 = p_menu_id OR
+            gor.f_menu_32 = p_menu_id OR
+            gor.f_menu_33 = p_menu_id OR
+            gor.f_menu_34 = p_menu_id OR
+            gor.f_menu_35 = p_menu_id OR
+            gor.f_menu_36 = p_menu_id OR
+            gor.f_menu_37 = p_menu_id OR
+            gor.f_menu_38 = p_menu_id OR
+            gor.f_menu_39 = p_menu_id OR
+            gor.f_menu_40 = p_menu_id OR
+            gor.f_menu_41 = p_menu_id OR
+            gor.f_menu_42 = p_menu_id OR
+            gor.f_menu_43 = p_menu_id OR
+            gor.f_menu_44 = p_menu_id OR
+            gor.f_menu_45 = p_menu_id OR
+            gor.f_menu_46 = p_menu_id OR
+            gor.f_menu_47 = p_menu_id OR
+            gor.f_menu_48 = p_menu_id OR
+            gor.f_menu_49 = p_menu_id OR
+            gor.f_menu_50 = p_menu_id
+        )
+        AND (gor.publishing_status <> 'Inactive' )
+    )
+    INTO v_has_active_revision;
+
+    /*
+      If none found → tell Semarchy to mark menu inactive
+    */
+    IF NOT v_has_active_revision THEN
+        RETURN 'Inactive';
+    END IF;
+
+    /*
+      Otherwise return the current stored menu status
+      (Semarchy will decide whether to change it)
+    */
+    SELECT sm.f_ote_menu_status
+      INTO v_menu_status
+      FROM csds.sa_ote_menu sm
+     WHERE sm.om_id = p_menu_id
+     LIMIT 1;
+
+    RETURN v_menu_status;
+END;
+$function$
+;

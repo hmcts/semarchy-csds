@@ -1,0 +1,543 @@
+column_name,value
+b_loadid,v_load_id
+b_pubid,SEMARCHY_USER
+b_sourceid,PERF.<counter>
+b_classname,OffenceRevision
+b_credate,CURRENT_TIMESTAMP
+b_upddate,CURRENT_TIMESTAMP
+b_creator,v_userName
+b_updator,v_userName
+recordable,TRUE
+reportable,TRUE
+cjs_title,Speeding over statutory limit
+custodial_indicator,FALSE
+date_used_from,1/1/2024
+date_used_to,NULL
+standard_list,TRUE
+traffic_control,TRUE
+version_number,1
+changed_by,admin
+changed_date,CURRENT_TIMESTAMP
+dvla_code,A123
+offence_notes,Test offence notes
+maximum_penalty,Fine and penalty points
+description,Driving a motor vehicle above the legal speed limit
+derived_from_cjs_code,NULL
+ho_class,10
+ho_subclass,2
+proceedings_code,12345
+sl_cjs_title,Speeding offence
+pnld_stndrd_offnc_wording,Exceeding speed limit on public road
+sl_pnld_standard_off_word,Standard wording for speeding offence
+pnld_date_of_last_update,6/1/2024
+prosecution_time_limit,6 months
+max_fine_type_magct_code,F
+mode_of_trial,Summary
+endorsable_flag,TRUE
+location_flag,FALSE
+principal_offnc_category,Road Traffic
+user_offence_wording,User wording
+user_statement_of_facts,User statement of facts
+user_acts_and_section,Road Traffic Act 1988 s.89
+entry_prmpt_sub_sow,Prompt SOW
+entry_prmpt_sub_sof,Prompt SOF
+entry_prompt_subs_ans,Prompt Answer
+current_editor,editor1
+cjs_code,SP1234
+area,1
+blocked,FALSE
+sl_off_statmnt_fct_txt,Statement of facts
+sl_offence_wording_text,Offence wording
+sl_offence_act_sec_txt,Act and section
+offence_code,123
+pnld_offence_start_date,CURRENT_TIMESTAMP
+pnld_offence_end_date,NULL
+sow_ref,SOW001
+cloned_from,NULL
+clone_type_code,NULL
+custodial_indicator2,NULL
+standard_list2,NULL
+recordable2,NULL
+reportable2,NULL
+sys_cloned_to,NULL
+sys_show_deleted,FALSE
+authoring_status,Draft
+publishing_status,Not Published
+offence_type,CR
+offence_source,DVLA
+mis_classification,MC01
+offence_class,A
+t01entry_number,1
+t01minimum,1
+t01maximum,1
+t01entry_format,MNU
+t01entry_prompt,Terminal Entry 1
+t01standard_entry_identifier,CO
+t01delete_indicator,FALSE
+t01menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t02entry_number,2
+t02minimum,1
+t02maximum,1
+t02entry_format,MNU
+t02entry_prompt,Terminal Entry 2
+t02standard_entry_identifier,CO
+t02delete_indicator,FALSE
+t02menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t03entry_number,3
+t03minimum,1
+t03maximum,1
+t03entry_format,MNU
+t03entry_prompt,Terminal Entry 3
+t03standard_entry_identifier,CO
+t03delete_indicator,FALSE
+t03menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t04entry_number,4
+t04minimum,1
+t04maximum,1
+t04entry_format,MNU
+t04entry_prompt,Terminal Entry 4
+t04standard_entry_identifier,CO
+t04delete_indicator,FALSE
+t04menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t05entry_number,5
+t05minimum,1
+t05maximum,1
+t05entry_format,MNU
+t05entry_prompt,Terminal Entry 5
+t05standard_entry_identifier,CO
+t05delete_indicator,FALSE
+t05menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t06entry_number,6
+t06minimum,1
+t06maximum,1
+t06entry_format,MNU
+t06entry_prompt,Terminal Entry 6
+t06standard_entry_identifier,CO
+t06delete_indicator,FALSE
+t06menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t07entry_number,7
+t07minimum,1
+t07maximum,1
+t07entry_format,MNU
+t07entry_prompt,Terminal Entry 7
+t07standard_entry_identifier,CO
+t07delete_indicator,FALSE
+t07menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t08entry_number,8
+t08minimum,1
+t08maximum,1
+t08entry_format,MNU
+t08entry_prompt,Terminal Entry 8
+t08standard_entry_identifier,CO
+t08delete_indicator,FALSE
+t08menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t09entry_number,9
+t09minimum,1
+t09maximum,1
+t09entry_format,MNU
+t09entry_prompt,Terminal Entry 9
+t09standard_entry_identifier,CO
+t09delete_indicator,FALSE
+t09menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t10entry_number,10
+t10minimum,1
+t10maximum,1
+t10entry_format,MNU
+t10entry_prompt,Terminal Entry 10
+t10standard_entry_identifier,CO
+t10delete_indicator,FALSE
+t10menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t11entry_number,11
+t11minimum,1
+t11maximum,1
+t11entry_format,MNU
+t11entry_prompt,Terminal Entry 11
+t11standard_entry_identifier,CO
+t11delete_indicator,FALSE
+t11menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t12entry_number,12
+t12minimum,1
+t12maximum,1
+t12entry_format,MNU
+t12entry_prompt,Terminal Entry 12
+t12standard_entry_identifier,CO
+t12delete_indicator,FALSE
+t12menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t13entry_number,13
+t13minimum,1
+t13maximum,1
+t13entry_format,MNU
+t13entry_prompt,Terminal Entry 13
+t13standard_entry_identifier,CO
+t13delete_indicator,FALSE
+t13menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t14entry_number,14
+t14minimum,1
+t14maximum,1
+t14entry_format,MNU
+t14entry_prompt,Terminal Entry 14
+t14standard_entry_identifier,CO
+t14delete_indicator,FALSE
+t14menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t15entry_number,15
+t15minimum,1
+t15maximum,1
+t15entry_format,MNU
+t15entry_prompt,Terminal Entry 15
+t15standard_entry_identifier,CO
+t15delete_indicator,FALSE
+t15menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t16entry_number,16
+t16minimum,1
+t16maximum,1
+t16entry_format,MNU
+t16entry_prompt,Terminal Entry 16
+t16standard_entry_identifier,CO
+t16delete_indicator,FALSE
+t16menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t17entry_number,17
+t17minimum,1
+t17maximum,1
+t17entry_format,MNU
+t17entry_prompt,Terminal Entry 17
+t17standard_entry_identifier,CO
+t17delete_indicator,FALSE
+t17menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t18entry_number,18
+t18minimum,1
+t18maximum,1
+t18entry_format,MNU
+t18entry_prompt,Terminal Entry 18
+t18standard_entry_identifier,CO
+t18delete_indicator,FALSE
+t18menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t19entry_number,19
+t19minimum,1
+t19maximum,1
+t19entry_format,MNU
+t19entry_prompt,Terminal Entry 19
+t19standard_entry_identifier,CO
+t19delete_indicator,FALSE
+t19menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t20entry_number,20
+t20minimum,1
+t20maximum,1
+t20entry_format,MNU
+t20entry_prompt,Terminal Entry 20
+t20standard_entry_identifier,CO
+t20delete_indicator,FALSE
+t20menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t21entry_number,21
+t21minimum,1
+t21maximum,1
+t21entry_format,MNU
+t21entry_prompt,Terminal Entry 21
+t21standard_entry_identifier,CO
+t21delete_indicator,FALSE
+t21menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t22entry_number,22
+t22minimum,1
+t22maximum,1
+t22entry_format,MNU
+t22entry_prompt,Terminal Entry 22
+t22standard_entry_identifier,CO
+t22delete_indicator,FALSE
+t22menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t23entry_number,23
+t23minimum,1
+t23maximum,1
+t23entry_format,MNU
+t23entry_prompt,Terminal Entry 23
+t23standard_entry_identifier,CO
+t23delete_indicator,FALSE
+t23menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t24entry_number,24
+t24minimum,1
+t24maximum,1
+t24entry_format,MNU
+t24entry_prompt,Terminal Entry 24
+t24standard_entry_identifier,CO
+t24delete_indicator,FALSE
+t24menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t25entry_number,25
+t25minimum,1
+t25maximum,1
+t25entry_format,MNU
+t25entry_prompt,Terminal Entry 25
+t25standard_entry_identifier,CO
+t25delete_indicator,FALSE
+t25menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t26entry_number,26
+t26minimum,1
+t26maximum,1
+t26entry_format,MNU
+t26entry_prompt,Terminal Entry 26
+t26standard_entry_identifier,CO
+t26delete_indicator,FALSE
+t26menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t27entry_number,27
+t27minimum,1
+t27maximum,1
+t27entry_format,MNU
+t27entry_prompt,Terminal Entry 27
+t27standard_entry_identifier,CO
+t27delete_indicator,FALSE
+t27menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t28entry_number,28
+t28minimum,1
+t28maximum,1
+t28entry_format,MNU
+t28entry_prompt,Terminal Entry 28
+t28standard_entry_identifier,CO
+t28delete_indicator,FALSE
+t28menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t29entry_number,29
+t29minimum,1
+t29maximum,1
+t29entry_format,MNU
+t29entry_prompt,Terminal Entry 29
+t29standard_entry_identifier,CO
+t29delete_indicator,FALSE
+t29menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t30entry_number,30
+t30minimum,1
+t30maximum,1
+t30entry_format,MNU
+t30entry_prompt,Terminal Entry 30
+t30standard_entry_identifier,CO
+t30delete_indicator,FALSE
+t30menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t31entry_number,31
+t31minimum,1
+t31maximum,1
+t31entry_format,MNU
+t31entry_prompt,Terminal Entry 31
+t31standard_entry_identifier,CO
+t31delete_indicator,FALSE
+t31menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t32entry_number,32
+t32minimum,1
+t32maximum,1
+t32entry_format,MNU
+t32entry_prompt,Terminal Entry 32
+t32standard_entry_identifier,CO
+t32delete_indicator,FALSE
+t32menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t33entry_number,33
+t33minimum,1
+t33maximum,1
+t33entry_format,MNU
+t33entry_prompt,Terminal Entry 33
+t33standard_entry_identifier,CO
+t33delete_indicator,FALSE
+t33menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t34entry_number,34
+t34minimum,1
+t34maximum,1
+t34entry_format,MNU
+t34entry_prompt,Terminal Entry 34
+t34standard_entry_identifier,CO
+t34delete_indicator,FALSE
+t34menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t35entry_number,35
+t35minimum,1
+t35maximum,1
+t35entry_format,MNU
+t35entry_prompt,Terminal Entry 35
+t35standard_entry_identifier,CO
+t35delete_indicator,FALSE
+t35menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t36entry_number,36
+t36minimum,1
+t36maximum,1
+t36entry_format,MNU
+t36entry_prompt,Terminal Entry 36
+t36standard_entry_identifier,CO
+t36delete_indicator,FALSE
+t36menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t37entry_number,37
+t37minimum,1
+t37maximum,1
+t37entry_format,MNU
+t37entry_prompt,Terminal Entry 37
+t37standard_entry_identifier,CO
+t37delete_indicator,FALSE
+t37menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t38entry_number,38
+t38minimum,1
+t38maximum,1
+t38entry_format,MNU
+t38entry_prompt,Terminal Entry 38
+t38standard_entry_identifier,CO
+t38delete_indicator,FALSE
+t38menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t39entry_number,39
+t39minimum,1
+t39maximum,1
+t39entry_format,MNU
+t39entry_prompt,Terminal Entry 39
+t39standard_entry_identifier,CO
+t39delete_indicator,FALSE
+t39menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t40entry_number,40
+t40minimum,1
+t40maximum,1
+t40entry_format,MNU
+t40entry_prompt,Terminal Entry 40
+t40standard_entry_identifier,CO
+t40delete_indicator,FALSE
+t40menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t41entry_number,41
+t41minimum,1
+t41maximum,1
+t41entry_format,MNU
+t41entry_prompt,Terminal Entry 41
+t41standard_entry_identifier,CO
+t41delete_indicator,FALSE
+t41menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t42entry_number,42
+t42minimum,1
+t42maximum,1
+t42entry_format,MNU
+t42entry_prompt,Terminal Entry 42
+t42standard_entry_identifier,CO
+t42delete_indicator,FALSE
+t42menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t43entry_number,43
+t43minimum,1
+t43maximum,1
+t43entry_format,MNU
+t43entry_prompt,Terminal Entry 43
+t43standard_entry_identifier,CO
+t43delete_indicator,FALSE
+t43menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t44entry_number,44
+t44minimum,1
+t44maximum,1
+t44entry_format,MNU
+t44entry_prompt,Terminal Entry 44
+t44standard_entry_identifier,CO
+t44delete_indicator,FALSE
+t44menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t45entry_number,45
+t45minimum,1
+t45maximum,1
+t45entry_format,MNU
+t45entry_prompt,Terminal Entry 45
+t45standard_entry_identifier,CO
+t45delete_indicator,FALSE
+t45menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t46entry_number,46
+t46minimum,1
+t46maximum,1
+t46entry_format,MNU
+t46entry_prompt,Terminal Entry 46
+t46standard_entry_identifier,CO
+t46delete_indicator,FALSE
+t46menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t47entry_number,47
+t47minimum,1
+t47maximum,1
+t47entry_format,MNU
+t47entry_prompt,Terminal Entry 47
+t47standard_entry_identifier,CO
+t47delete_indicator,FALSE
+t47menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t48entry_number,48
+t48minimum,1
+t48maximum,1
+t48entry_format,MNU
+t48entry_prompt,Terminal Entry 48
+t48standard_entry_identifier,CO
+t48delete_indicator,FALSE
+t48menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t49entry_number,49
+t49minimum,1
+t49maximum,1
+t49entry_format,MNU
+t49entry_prompt,Terminal Entry 49
+t49standard_entry_identifier,CO
+t49delete_indicator,FALSE
+t49menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+t50entry_number,50
+t50minimum,1
+t50maximum,1
+t50entry_format,MNU
+t50entry_prompt,Terminal Entry 50
+t50standard_entry_identifier,CO
+t50delete_indicator,FALSE
+t50menu_url,http://localhost:8088/semarchy/mdm-app/CSDS/CrimeStandingDataService/browsing/AllOffenceMenus/125
+f_offence_header,v_headerkey
+f_menu_01,125
+f_menu_02,125
+f_menu_03,125
+f_menu_04,125
+f_menu_05,125
+f_menu_06,125
+f_menu_07,125
+f_menu_08,125
+f_menu_09,125
+f_menu_10,125
+f_menu_11,125
+f_menu_12,125
+f_menu_13,125
+f_menu_14,125
+f_menu_15,125
+f_menu_16,125
+f_menu_17,125
+f_menu_18,125
+f_menu_19,125
+f_menu_20,125
+f_menu_21,125
+f_menu_22,125
+f_menu_23,125
+f_menu_24,125
+f_menu_25,125
+f_menu_26,125
+f_menu_27,125
+f_menu_28,125
+f_menu_29,125
+f_menu_30,125
+f_menu_31,125
+f_menu_32,125
+f_menu_33,125
+f_menu_34,125
+f_menu_35,125
+f_menu_36,125
+f_menu_37,125
+f_menu_38,125
+f_menu_39,125
+f_menu_40,125
+f_menu_41,125
+f_menu_42,125
+f_menu_43,125
+f_menu_44,125
+f_menu_45,125
+f_menu_46,125
+f_menu_47,125
+f_menu_48,125
+f_menu_49,125
+f_menu_50,125
+can_be_bulk,TRUE
+initial_fee,TRUE
+contested_fee,TRUE
+application_synonym,Synonym
+exparte,TRUE
+jurisdiction,Crown
+appeal_flag,TRUE
+summons_template_type,BREACH
+link_type,STANDALONE
+hearing_code,Appeal
+applicant_appellant_flag,Appellant
+plea_applicable_flag,TRUE
+active_offence_order,OFFENCE
+commissioner_of_oath,TRUE
+breach_type,NOT_APPLICABLE
+court_of_appeal_flag,TRUE
+court_extract_available,TRUE
+listing_notification_temp,NOT_APPLICABLE
+boxwork_notification_temp,NOTIF
+prosecutor_as_third_party,TRUE
+resentencing_activation_c,N
+prefix,N
+obsolete_indicator,N
