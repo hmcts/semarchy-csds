@@ -1,0 +1,12 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "SemarchyBaseURL": "http://localhost:8088/semarchy/api/rest",
+    "SemarchyAPIKey": "ro4S1ff.5gPZ2QWwapfqsFqQMtkgqMlJf8TqmpS6n3G",
+    "NQ_GetOffenceRevisionActiveCandidates": "named-query/CSDS/GetOffenceRevisionActiveCandidates/GD",
+    "NQ_GetOffenceRevisionFutureCandidates": "named-query/CSDS/GetOffenceRevisionFutureCandidates/GD",
+    "NQ_GetOffenceRevisionInActiveCandidates": "named-query/CSDS/GetOffenceRevisionInActiveCandidates/GD",
+    "SemarchyLoadURL": "loads/CSDS"
+  }
+}
