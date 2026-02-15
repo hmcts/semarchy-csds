@@ -1,0 +1,20 @@
+{
+    "action": "CREATE_LOAD_AND_SUBMIT",
+    "programName": "UPDATE_DATA_REST_API",
+    "loadDescription": "Offence Data Load",
+    "jobName": "DAJ_AuthorOffenceWordings",
+    "persistOptions": {
+        "optionsPerEntity": {},
+        "missingIdBehavior": "GENERATE",
+        "persistMode": "IF_NO_ERROR_OR_MATCH"
+    },
+    "persistRecords": {
+        "OffenceWording": [
+            {
+                "OffenceWordingText": "{1} at {2}, failed to comply with a notice served by an inspector under regulation 16(2)",
+                "SecondLanguageOffenceWordingText": "{1} ym {2}, methwyd â chydymffurfio â hysbysiad a wasanaethwyd gan arolygydd o dan reoliad 16(2)",
+                "Status": "Draft"
+            }
+        ]
+    }
+}

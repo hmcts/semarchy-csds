@@ -1,0 +1,20 @@
+{
+    "action": "CREATE_LOAD_AND_SUBMIT",
+    "programName": "UPDATE_DATA_REST_API",
+    "loadDescription": "Offence Data Load",
+    "jobName": "DAJ_AuthorOffenceActAndSections",
+    "persistOptions": {
+        "optionsPerEntity": {},
+        "missingIdBehavior": "GENERATE",
+        "persistMode": "IF_NO_ERROR_OR_MATCH"
+    },
+    "persistRecords": {
+        "OffenceActAndSection": [
+            {
+                "OffenceActAndSectionText": "Contrary to regulations 16(6) and 20 of the Transmissible Spongiform Encephalopathles (Wales) Regulations 2018.",
+                "SecondLanguageOffenceActAndSectionText": "Yn groes i reoliadau 16(6) a 20 o Reoliadau Clefydau Sbyngaidd Trosglwyddadwy (Cymalafiechydon) (Cymru) 2018.",
+                "FID_Status": "Draft"
+            }
+        ]
+    }
+}

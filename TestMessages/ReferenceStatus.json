@@ -1,0 +1,57 @@
+{
+    "action": "CREATE_LOAD_AND_SUBMIT",
+    "programName": "UPDATE_DATA_REST_API",
+    "loadDescription": "Offence Data Load",
+    "jobName": "ReferenceDataLoad",
+    "persistOptions": {
+        "optionsPerEntity": {},
+        "missingIdBehavior": "GENERATE",
+        "persistMode": "IF_NO_ERROR_OR_MATCH"
+    },
+    "persistRecords": {
+        "Category": [
+            {
+                "Category": "PNLD ZIP Upload",
+                "CategoryDescription": "PNLD ZIP File Upload"
+            },
+            {
+                "Category": "PNLD XML Upload",
+                "CategoryDescription": "PNLD XML File Upload"
+            },
+            {
+                "Category": "Offence Status",
+                "CategoryDescription": "Offence Status"
+            },
+            {
+                "Category": "Offence Menu Status",
+                "CategoryDescription": "Offence Menu Status"
+            }
+        ],
+        "Status": [
+            {
+                "StatusCode": "Draft",
+                "FID_Category": "Offence Status",
+                "StatusCodeDescription": "Offence Status: Draft"
+            },
+            {
+                "StatusCode": "Final",
+                "FID_Category": "Offence Status",
+                "StatusCodeDescription": "Offence Status: Final"
+            }
+        ],
+        "SourceStatus": [
+            {
+                "SourceStatusCode": "To Be Processed",
+                "SourceStatusCodeDescription": "File Has Been Uploaded & Is Awaiting Processing"
+            },
+            {
+                "SourceStatusCode": "Success",
+                "SourceStatusCodeDescription": "File Has Successfully Been Processed"
+            },
+            {
+                "SourceStatusCode": "Failure",
+                "SourceStatusCodeDescription": "File Has Failed To Be Processed"
+            }
+        ]
+    }
+}

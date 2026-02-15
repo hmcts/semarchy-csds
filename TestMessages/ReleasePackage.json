@@ -1,0 +1,33 @@
+{
+    "action": "CREATE_LOAD_AND_SUBMIT",
+    "programName": "UPDATE_DATA_REST_API",
+    "loadDescription": "Offence Data Load",
+    "jobName": "ReleasePackagesDataLoad",
+    "persistOptions": {
+        "optionsPerEntity": {},
+        "missingIdBehavior": "GENERATE",
+        "persistMode": "IF_NO_ERROR_OR_MATCH"
+    },
+    "persistRecords": {
+        "ReleasePackage": [
+            {
+                "Description": "John F Test 2022 Oct 2022",
+                "PublishDate": "2023-02-10T00:00:00.000Z",
+                "Urgent": true,
+                "ReleaseDate": "2023-02-10T00:00:00.000Z",
+                "PublishBy": "sachin.monteiro@valcon.com",
+                "Notes": "RP TEST END TO END 16/01/2020",
+                "FID_ReleasePackageStatus": "Open"
+            }
+        ],
+        "ChangeSetHeader": [
+            {
+                "FID_ReleasePackage": 3,
+                "Description": "Change Set Header - John F Test 2022 Oct 2022",
+                "ReferenceType": "Test",
+                "FID_ChangeSetHeaderStatus": "Open",
+                "ChangeReason": "Release Package Test"
+            }
+        ]
+    }
+}
