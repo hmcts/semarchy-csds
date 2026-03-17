@@ -15,17 +15,6 @@ parameters:
   - name: deploy_prod
     type: boolean
     default: false
-  - name: deployments
-    type: object
-    default:
-      - environment: "sbox"
-        service_connection: "DCD-CFTAPPS-SBOX"
-      - environment: "dev"
-        service_connection: "DCD-CFTAPPS-DEV"
-      - environment: "stg"
-        service_connection: "DCD-CFTAPPS-STG"
-      - environment: "prod"
-        service_connection: "DCD-CFTAPPS-PROD"
 
 variables:
   - name: timeoutInMinutes
@@ -34,21 +23,10 @@ variables:
     value: ubuntu-latest
 
 stages:
-  - ${{ each deployment in parameters.deployments }}:
-    - ${{ if or(and(eq(deployment.environment, 'sbox'), eq(parameters.deploy_sandbox, true)), and(eq(deployment.environment, 'dev'), eq(parameters.deploy_dev, true)), and(eq(deployment.environment, 'stg'), eq(parameters.deploy_stg, true)), and(eq(deployment.environment, 'prod'), eq(parameters.deploy_prod, true))) }}:
-      - stage: Deploy_${{ deployment.environment }}
-        jobs:
-          - job: DeployFunctionApps
-            pool: hmcts-cftptl-agent-pool
-            timeoutInMinutes: ${{ variables.timeoutInMinutes }}
-            steps:
-            - template: ../templates/python-function-app-build-deploy.yaml
-              parameters:
-                environment: ${{ deployment.environment }}
-                serviceConnection: ${{ deployment.service_connection }}
-                pythonVersion: "3.13"
-                functions:
-                  - workingDirectory: "$(System.DefaultWorkingDirectory)/functions/pnld"
-                    appName: "pnld"
-                  - workingDirectory: "$(System.DefaultWorkingDirectory)/functions/pub"
-                    appName: "pub"
+  - template: ../templates/deploy-function-apps-stages.yaml
+    parameters:
+      deploy_sandbox: ${{ parameters.deploy_sandbox }}
+      deploy_dev: ${{ parameters.deploy_dev }}
+      deploy_stg: ${{ parameters.deploy_stg }}
+      deploy_prod: ${{ parameters.deploy_prod }}
+      timeoutInMinutes: ${{ variables.timeoutInMinutes }}
