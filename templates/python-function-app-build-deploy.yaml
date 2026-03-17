@@ -1,0 +1,59 @@
+parameters:
+  - name: environment
+    type: string
+    default: ""
+  - name: serviceConnection
+    type: string
+    default: ""
+  - name: pythonVersion
+    type: string
+    default: "3.13"
+  - name: workingDirectory
+    type: string
+    default: ""
+  - name: appName
+    type: string
+    default: ""
+  - name: functions
+    type: object
+
+steps:
+  - checkout: self
+    clean: true
+  - bash: |
+      set -e
+      add-apt-repository ppa:deadsnakes/ppa -y
+      apt-get update -y
+      apt-get install -y python${{ parameters.pythonVersion }} python${{ parameters.pythonVersion }}-venv python${{ parameters.pythonVersion }}-dev
+      update-alternatives --install /usr/bin/python python /usr/bin/python${{ parameters.pythonVersion }} 1
+      update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${{ parameters.pythonVersion }} 1
+      python --version
+    displayName: "Install Python ${{ parameters.pythonVersion }}"
+  - ${{ each function in parameters.functions }}:
+      - bash: |
+          if [ -f extensions.csproj ]
+          then
+              dotnet build extensions.csproj --output ./bin
+          fi
+          python -m pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
+        displayName: "Install Python dependencies for ${{ function.appName }}"
+        workingDirectory: ${{ function.workingDirectory }}
+      - task: ArchiveFiles@2
+        displayName: "Archive files for ${{ function.appName }}"
+        inputs:
+          rootFolderOrFile: "${{ function.workingDirectory }}"
+          includeRootFolder: false
+          archiveFile: "$(Build.ArtifactStagingDirectory)/functions/${{ function.appName }}_build$(Build.BuildId).zip"
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)/functions"
+      artifactName: "${{ parameters.environment }}-function-apps"
+  - ${{ each function in parameters.functions }}:
+      - task: AzureFunctionApp@2
+        displayName: "Deploy Function App ${{ function.appName }} in ${{ parameters.environment }}"
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnection }}
+          appType: "functionAppLinux"
+          appName: "csds-${{ function.appName }}-func-${{ parameters.environment }}"
+          package: "$(Build.ArtifactStagingDirectory)/functions/${{ function.appName }}_build$(Build.BuildId).zip"
+          runtimeStack: "PYTHON|${{ parameters.pythonVersion }}"
