@@ -1,0 +1,32 @@
+trigger: none
+
+pr: none
+
+parameters:
+  - name: deploy_sandbox
+    type: boolean
+    default: true
+  - name: deploy_dev
+    type: boolean
+    default: false
+  - name: deploy_stg
+    type: boolean
+    default: false
+  - name: deploy_prod
+    type: boolean
+    default: false
+
+variables:
+  - name: timeoutInMinutes
+    value: 60
+  - name: agentImage
+    value: ubuntu-latest
+
+stages:
+  - template: ../templates/deploy-function-apps-stages.yaml
+    parameters:
+      deploy_sandbox: ${{ parameters.deploy_sandbox }}
+      deploy_dev: ${{ parameters.deploy_dev }}
+      deploy_stg: ${{ parameters.deploy_stg }}
+      deploy_prod: ${{ parameters.deploy_prod }}
+      timeoutInMinutes: ${{ variables.timeoutInMinutes }}
