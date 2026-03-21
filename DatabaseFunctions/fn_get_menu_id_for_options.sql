@@ -11,7 +11,7 @@ BEGIN
     INTO v_menu_id
     FROM csds.sa_ote_menu
     WHERE b_loadid = v_currentloadid
-      AND pnld_hash_md5 = v_menu_md5;
+      AND sys_pnld_data_hash = v_menu_md5;
 
     RETURN v_menu_id;
 END;

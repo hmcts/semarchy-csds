@@ -1,0 +1,561 @@
+-- DROP PROCEDURE csds.proc_populate_initial_load_temp(text);
+
+CREATE OR REPLACE PROCEDURE csds.proc_populate_initial_load_temp(IN p_user_name text DEFAULT NULL::text)
+ LANGUAGE plpgsql
+AS $procedure$
+DECLARE
+    v_userName TEXT := p_user_name;
+    v_load_id NUMERIC := 1;
+BEGIN
+
+-- ============================================
+-- 1️⃣ Truncate staging tables for full reload
+-- ============================================
+TRUNCATE TABLE csds.migratedoffenceheaders RESTART IDENTITY;
+TRUNCATE TABLE csds.migratedoffencerevisions RESTART IDENTITY;
+TRUNCATE TABLE csds."migratedOTEMenus" RESTART IDENTITY;
+TRUNCATE TABLE csds."migratedMenuOptions"  RESTART IDENTITY;
+
+-- ============================================
+-- 2️⃣ Load OTE Menus
+-- ============================================
+INSERT INTO csds."migratedOTEMenus" (
+    "om_id",
+    "name",
+    "version_number",
+    "version_type",
+    "changed_by",
+    "changed_date",
+    "mcc_mcc_id",
+    "pssotemenuid"
+)
+SELECT
+    CAST("OM_ID" AS numeric),
+    "NAME",
+    CAST("VERSION_NUMBER" AS numeric),
+    'Initial',
+    CAST("CHANGED_BY" AS numeric),
+    CAST("CHANGED_DATE" AS timestamp),
+    CAST("MCC_MCC_ID" AS numeric),
+    CAST("OM_ID" AS numeric)
+FROM ext_stage.OTE_MENUS;
+
+-- ============================================
+-- 3️⃣ Load Menu Options (with OED & OMOP IDs)
+-- ============================================
+WITH "OrderedElements" AS (
+    SELECT
+        ome."OMO_OMO_ID",
+        ome."ELEMENT_NUMBER",
+        oed."ENTRY_FORMAT",
+        oed."OED_MIN",
+        oed."OED_MAX",
+        oed."ENTRY_PROMPT",
+        oed."OED_ID",
+        ome."OMOP_ID",
+        ROW_NUMBER() OVER (
+            PARTITION BY ome."OMO_OMO_ID"
+            ORDER BY CAST(ome."ELEMENT_NUMBER" AS numeric)
+        ) AS rn
+    FROM ext_stage.OTE_MENU_OPTION_ELEMENTS ome
+    JOIN ext_stage.OTE_ELEMENT_DEFINITIONS oed
+        ON oed."OED_ID" = ome."OED_OED_ID"
+)
+INSERT INTO csds."migratedMenuOptions" (
+    "omo_id","mcc_mcc_id","option_number","option_text","version_number","changed_by","changed_date",
+    "e01element_number","e01entry_format","e01minimum","e01maximum","e01entry_prompt","e01pss_oed_id","e01pss_omop_id",
+    "e02element_number","e02entry_format","e02minimum","e02maximum","e02entry_prompt","e02pss_oed_id","e02pss_omop_id",
+    "e03element_number","e03entry_format","e03minimum","e03maximum","e03entry_prompt","e03pss_oed_id","e03pss_omop_id",
+    "e04element_number","e04entry_format","e04minimum","e04maximum","e04entry_prompt","e04pss_oed_id","e04pss_omop_id",
+    "e05element_number","e05entry_format","e05minimum","e05maximum","e05entry_prompt","e05pss_oed_id","e05pss_omop_id",
+    "e06element_number","e06entry_format","e06minimum","e06maximum","e06entry_prompt","e06pss_oed_id","e06pss_omop_id",
+    "e07element_number","e07entry_format","e07minimum","e07maximum","e07entry_prompt","e07pss_oed_id","e07pss_omop_id",
+    "e08element_number","e08entry_format","e08minimum","e08maximum","e08entry_prompt","e08pss_oed_id","e08pss_omop_id",
+    "e09element_number","e09entry_format","e09minimum","e09maximum","e09entry_prompt","e09pss_oed_id","e09pss_omop_id",
+    "e10element_number","e10entry_format","e10minimum","e10maximum","e10entry_prompt","e10pss_oed_id","e10pss_omop_id",
+    "f_ote_optn_menu"
+)
+SELECT
+    CAST(omo."OMO_ID" AS numeric),
+    CAST(omo."MCC_MCC_ID" AS numeric),
+    CAST(omo."OPTION_NUMBER" AS numeric),
+    omo."OPTION_TEXT",
+    CAST(omo."VERSION_NUMBER" AS numeric),
+    CAST(omo."CHANGED_BY" AS numeric),
+    CAST(omo."CHANGED_DATE" AS timestamp),
+
+    -- e01
+    MAX(CASE WHEN oe.rn = 1 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 1 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 1 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 1 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 1 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 1 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 1 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e02
+    MAX(CASE WHEN oe.rn = 2 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 2 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 2 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 2 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 2 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 2 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 2 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e03
+    MAX(CASE WHEN oe.rn = 3 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 3 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 3 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 3 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 3 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 3 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 3 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e04
+    MAX(CASE WHEN oe.rn = 4 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 4 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 4 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 4 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 4 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 4 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 4 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e05
+    MAX(CASE WHEN oe.rn = 5 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 5 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 5 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 5 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 5 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 5 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 5 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e06
+    MAX(CASE WHEN oe.rn = 6 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 6 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 6 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 6 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 6 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 6 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 6 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e07
+    MAX(CASE WHEN oe.rn = 7 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 7 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 7 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 7 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 7 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 7 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 7 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e08
+    MAX(CASE WHEN oe.rn = 8 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 8 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 8 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 8 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 8 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 8 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 8 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e09
+    MAX(CASE WHEN oe.rn = 9 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 9 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 9 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 9 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 9 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 9 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 9 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    -- e10
+    MAX(CASE WHEN oe.rn = 10 THEN CAST(oe."ELEMENT_NUMBER" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 10 THEN oe."ENTRY_FORMAT" END),
+    MAX(CASE WHEN oe.rn = 10 THEN CAST(oe."OED_MIN" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 10 THEN CAST(oe."OED_MAX" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 10 THEN oe."ENTRY_PROMPT" END),
+    MAX(CASE WHEN oe.rn = 10 THEN CAST(oe."OED_ID" AS numeric) END),
+    MAX(CASE WHEN oe.rn = 10 THEN CAST(oe."OMOP_ID" AS numeric) END),
+
+    CAST(omo."OM_OM_ID" AS numeric)
+FROM ext_stage.OTE_MENU_OPTIONS omo
+LEFT JOIN "OrderedElements" oe
+    ON oe."OMO_OMO_ID" = omo."OMO_ID"
+GROUP BY
+    omo."OMO_ID", omo."MCC_MCC_ID", omo."OPTION_NUMBER", omo."OPTION_TEXT",
+    omo."VERSION_NUMBER", omo."CHANGED_BY", omo."CHANGED_DATE", omo."OM_OM_ID";
+-- ============================================
+-- 4️⃣ Load Offence Headers
+-- ============================================
+WITH distinct_cjs AS (
+    SELECT
+        "CJS_CODE",
+        MAX("OH_ID") AS representative_oh_id   -- pick one deterministic source per CJS_CODE
+    FROM ext_stage.offence_headers
+    GROUP BY "CJS_CODE"
+)
+INSERT INTO csds.migratedoffenceheaders (
+    b_loadid,
+    oh_id,
+    b_classname,
+    b_credate,
+    b_upddate,
+    b_creator,
+    b_updator,
+    pnld_start_date,
+    pnld_end_date,
+    pssoffenceheaderid,
+    psspnldoffenceheaderid
+)
+SELECT
+    v_load_id,
+    representative_oh_id::NUMERIC,
+    'OffenceHeader',
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    v_userName,
+    v_userName,
+    NULL,
+    NULL,
+    representative_oh_id::NUMERIC,
+    poh."POH_ID"::NUMERIC
+FROM distinct_cjs d
+LEFT JOIN ext_stage.cpp_pnld_offence_headers poh
+    ON poh."OH_OH_ID" = d.representative_oh_id;
+
+-- ============================================
+-- CTEs for terminal entries and revision versions
+-- ============================================
+WITH ranked_terminal_entries AS (
+SELECT
+te.*,
+ROW_NUMBER() OVER (
+PARTITION BY te."OFR_OFR_ID"
+ORDER BY te."ENTRY_NUMBER"
+) AS rn
+FROM ext_stage.offence_terminal_entries te
+),
+revisions_with_version AS (
+SELECT
+    r.*,
+    oh."CJS_CODE",
+    ROW_NUMBER() OVER (
+        PARTITION BY oh."CJS_CODE"
+        ORDER BY
+            COALESCE(NULLIF(r."DATE_USED_TO",'')::DATE, DATE '9999-12-31'),
+            NULLIF(r."DATE_USED_FROM",'')::DATE,
+            r."OFR_ID"
+    ) AS rn_per_cjs,
+
+    COUNT(*) OVER (
+        PARTITION BY oh."CJS_CODE"
+    ) AS cnt_per_cjs,
+
+    -- latest DATE_USED_FROM per CJS_CODE
+    ROW_NUMBER() OVER (
+        PARTITION BY oh."CJS_CODE"
+        ORDER BY
+            COALESCE(NULLIF(r."DATE_USED_FROM",'')::DATE, DATE '0001-01-01') DESC,
+            r."OFR_ID" DESC
+    ) AS rn_latest_from
+
+FROM ext_stage.offence_revisions r
+LEFT JOIN ext_stage.offence_headers oh
+    ON r."OH_OH_ID" = oh."OH_ID"
+),
+-- ============================================
+-- Map each CJS_CODE to one chosen OffenceHeader
+-- ============================================
+chosen_header AS (
+    SELECT
+        "CJS_CODE",
+        MAX("OH_ID") AS chosen_oh_id   -- pick MAX or MIN as the representative header
+    FROM ext_stage.offence_headers
+    GROUP BY "CJS_CODE"
+)
+-- ============================================
+-- 4️⃣ Insert all Offence Revisions
+-- ============================================
+INSERT INTO csds.migratedoffencerevisions (
+b_loadid, ofr_id, b_classname, recordable, reportable, cjs_title,
+custodial_indicator, date_used_from, date_used_to, standard_list, traffic_control,
+version_number, changed_by, changed_date, dvla_code, offence_notes, maximum_penalty,
+description, derived_from_cjs_code, ho_class, ho_subclass, proceedings_code,
+sl_cjs_title, pnld_stndrd_offnc_wording, sl_pnld_standard_off_word, pnld_date_of_last_update,
+prosecution_time_limit, max_fine_type_magct_code, max_fine_type_magct_desc,
+mode_of_trial, endorsable_flag, location_flag, principal_offnc_category,
+user_offence_wording, user_statement_of_facts, user_acts_and_section,
+sl_off_statmnt_fct_txt, sl_offence_wording_text, sl_offence_act_sec_txt,
+can_be_bulk, initial_fee_applicable, contested_fee_applicable,
+application_synonym, exparte, jurisdiction, appeal_flag, summons_template_type,
+link_type, hearing_code, applicant_appellant_flag, plea_applicable_flag,
+active_offence_order, commissioner_of_oath, court_of_appeal_flag,
+court_extract_available, listing_notification_temp, boxwork_notification_temp,
+prosecutor_as_third_party, resentencing_activation_c, prefix,
+cjs_code, offence_code, pnld_offence_start_date, pnld_offence_end_date,
+offence_type, mis_classification, offence_class, obsolete_indicator, 
+pss_ofr_id, 
+pss_cad_id,
+pss_xhb_ref_id,
+pss_pnld_ofr_id,
+pss_ad_id,
+pss_aas_id,
+pss_ow_id,
+pss_osf_id,
+pss_changed_date,
+pss_changed_by,
+oh_oh_id,
+offence_source,
+version_type,
+currentrecordindicator, 
+t01entry_number, t01minimum, t01maximum, t01entry_format, t01entry_prompt, t01standard_entry_identifier, t01delete_indicator, t01sys_terminal_entry_short, t01_pss_ote_id,
+        t02entry_number, t02minimum, t02maximum, t02entry_format, t02entry_prompt, t02standard_entry_identifier, t02delete_indicator, t02sys_terminal_entry_short, t02_pss_ote_id,
+        t03entry_number, t03minimum, t03maximum, t03entry_format, t03entry_prompt, t03standard_entry_identifier, t03delete_indicator, t03sys_terminal_entry_short, t03_pss_ote_id,
+        t04entry_number, t04minimum, t04maximum, t04entry_format, t04entry_prompt, t04standard_entry_identifier, t04delete_indicator, t04sys_terminal_entry_short, t04_pss_ote_id,
+        t05entry_number, t05minimum, t05maximum, t05entry_format, t05entry_prompt, t05standard_entry_identifier, t05delete_indicator, t05sys_terminal_entry_short, t05_pss_ote_id,
+        t06entry_number, t06minimum, t06maximum, t06entry_format, t06entry_prompt, t06standard_entry_identifier, t06delete_indicator, t06sys_terminal_entry_short, t06_pss_ote_id,
+        t07entry_number, t07minimum, t07maximum, t07entry_format, t07entry_prompt, t07standard_entry_identifier, t07delete_indicator, t07sys_terminal_entry_short, t07_pss_ote_id,
+        t08entry_number, t08minimum, t08maximum, t08entry_format, t08entry_prompt, t08standard_entry_identifier, t08delete_indicator, t08sys_terminal_entry_short, t08_pss_ote_id,
+        t09entry_number, t09minimum, t09maximum, t09entry_format, t09entry_prompt, t09standard_entry_identifier, t09delete_indicator, t09sys_terminal_entry_short, t09_pss_ote_id,
+        t10entry_number, t10minimum, t10maximum, t10entry_format, t10entry_prompt, t10standard_entry_identifier, t10delete_indicator, t10sys_terminal_entry_short, t10_pss_ote_id,
+        t11entry_number, t11minimum, t11maximum, t11entry_format, t11entry_prompt, t11standard_entry_identifier, t11delete_indicator, t11sys_terminal_entry_short, t11_pss_ote_id,
+        t12entry_number, t12minimum, t12maximum, t12entry_format, t12entry_prompt, t12standard_entry_identifier, t12delete_indicator, t12sys_terminal_entry_short, t12_pss_ote_id,
+        t13entry_number, t13minimum, t13maximum, t13entry_format, t13entry_prompt, t13standard_entry_identifier, t13delete_indicator, t13sys_terminal_entry_short, t13_pss_ote_id,
+        t14entry_number, t14minimum, t14maximum, t14entry_format, t14entry_prompt, t14standard_entry_identifier, t14delete_indicator, t14sys_terminal_entry_short, t14_pss_ote_id,
+        t15entry_number, t15minimum, t15maximum, t15entry_format, t15entry_prompt, t15standard_entry_identifier, t15delete_indicator, t15sys_terminal_entry_short, t15_pss_ote_id,
+        t16entry_number, t16minimum, t16maximum, t16entry_format, t16entry_prompt, t16standard_entry_identifier, t16delete_indicator, t16sys_terminal_entry_short, t16_pss_ote_id,
+        t17entry_number, t17minimum, t17maximum, t17entry_format, t17entry_prompt, t17standard_entry_identifier, t17delete_indicator, t17sys_terminal_entry_short, t17_pss_ote_id,
+        t18entry_number, t18minimum, t18maximum, t18entry_format, t18entry_prompt, t18standard_entry_identifier, t18delete_indicator, t18sys_terminal_entry_short, t18_pss_ote_id,
+        t19entry_number, t19minimum, t19maximum, t19entry_format, t19entry_prompt, t19standard_entry_identifier, t19delete_indicator, t19sys_terminal_entry_short, t19_pss_ote_id,
+        t20entry_number, t20minimum, t20maximum, t20entry_format, t20entry_prompt, t20standard_entry_identifier, t20delete_indicator, t20sys_terminal_entry_short, t20_pss_ote_id,
+        t21entry_number, t21minimum, t21maximum, t21entry_format, t21entry_prompt, t21standard_entry_identifier, t21delete_indicator, t21sys_terminal_entry_short, t21_pss_ote_id,
+        t22entry_number, t22minimum, t22maximum, t22entry_format, t22entry_prompt, t22standard_entry_identifier, t22delete_indicator, t22sys_terminal_entry_short, t22_pss_ote_id,
+        t23entry_number, t23minimum, t23maximum, t23entry_format, t23entry_prompt, t23standard_entry_identifier, t23delete_indicator, t23sys_terminal_entry_short, t23_pss_ote_id,
+        t24entry_number, t24minimum, t24maximum, t24entry_format, t24entry_prompt, t24standard_entry_identifier, t24delete_indicator, t24sys_terminal_entry_short, t24_pss_ote_id,
+        t25entry_number, t25minimum, t25maximum, t25entry_format, t25entry_prompt, t25standard_entry_identifier, t25delete_indicator, t25sys_terminal_entry_short, t25_pss_ote_id,
+        t26entry_number, t26minimum, t26maximum, t26entry_format, t26entry_prompt, t26standard_entry_identifier, t26delete_indicator, t26sys_terminal_entry_short, t26_pss_ote_id,
+        t27entry_number, t27minimum, t27maximum, t27entry_format, t27entry_prompt, t27standard_entry_identifier, t27delete_indicator, t27sys_terminal_entry_short, t27_pss_ote_id,
+        t28entry_number, t28minimum, t28maximum, t28entry_format, t28entry_prompt, t28standard_entry_identifier, t28delete_indicator, t28sys_terminal_entry_short, t28_pss_ote_id,
+        t29entry_number, t29minimum, t29maximum, t29entry_format, t29entry_prompt, t29standard_entry_identifier, t29delete_indicator, t29sys_terminal_entry_short, t29_pss_ote_id,
+        t30entry_number, t30minimum, t30maximum, t30entry_format, t30entry_prompt, t30standard_entry_identifier, t30delete_indicator, t30sys_terminal_entry_short, t30_pss_ote_id,
+f_menu_01, f_menu_02, f_menu_03, f_menu_04, f_menu_05,
+f_menu_06, f_menu_07, f_menu_08, f_menu_09, f_menu_10,
+f_menu_11, f_menu_12, f_menu_13, f_menu_14, f_menu_15,
+f_menu_16, f_menu_17, f_menu_18, f_menu_19, f_menu_20,
+f_menu_21, f_menu_22, f_menu_23, f_menu_24, f_menu_25,
+f_menu_26, f_menu_27, f_menu_28, f_menu_29, f_menu_30
+)
+    SELECT
+        v_load_id,
+        NULLIF(r."OFR_ID",'')::NUMERIC,
+        'OffenceRevision',
+        CASE WHEN r."RECORDABLE" ILIKE 'Y' THEN 'Yes'
+             WHEN r."RECORDABLE" ILIKE 'N' THEN 'No'
+             ELSE r."RECORDABLE" END,
+        CASE WHEN r."REPORTABLE" ILIKE 'Y' THEN 'Yes'
+             WHEN r."REPORTABLE" ILIKE 'N' THEN 'No'
+             ELSE r."REPORTABLE" END,
+        r."CJS_TITLE",
+        CASE WHEN r."CUSTODIAL_INDICATOR" ILIKE 'Y' THEN 'Yes'
+             WHEN r."CUSTODIAL_INDICATOR" ILIKE 'N' THEN 'No'
+             ELSE r."CUSTODIAL_INDICATOR" END,
+        NULLIF(r."DATE_USED_FROM",'')::DATE,
+        NULLIF(r."DATE_USED_TO",'')::DATE,
+        CASE WHEN r."STANDARD_LIST" ILIKE 'Y' THEN 'Yes'
+             WHEN r."STANDARD_LIST" ILIKE 'N' THEN 'No'
+             ELSE r."STANDARD_LIST" END,
+        CASE WHEN r."TRAFFIC_CONTROL" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        CASE WHEN r.cnt_per_cjs = 1 THEN 1 ELSE r.rn_per_cjs END::NUMERIC,
+        r."CHANGED_BY",
+        NULLIF(r."CHANGED_DATE",'')::TIMESTAMP,
+        r."DVLA_CODE",
+        r."OFFENCE_NOTES",
+        r."MAXIMUM_PENALTY",
+        r."DESCRIPTION",
+        r."DERIVED_FROM_CJS_CODE",
+        NULLIF(r."HO_CLASS",'')::NUMERIC,
+        NULLIF(r."HO_SUBCLASS",'')::NUMERIC,
+        NULLIF(r."PROCEEDINGS_CODE",'')::NUMERIC,
+        r."SL_CJS_TITLE",
+        por."PNLD_STANDARD_OFFENCE_WORDING",
+        por."SL_PNLD_STANDARD_OFF_WORDING",
+        NULLIF(por."DATE_OF_LAST_UPDATE",'')::DATE,
+        por."PROSECUTION_TIME_LIMIT",
+        por."MAX_FINE_TYPE_MAGCT_CODE",
+        por."MAX_FINE_TYPE_MAGCT_DESC",
+        por."MODE_OF_TRIAL",
+        por."ENDORSABLE_FLAG",
+        por."LOCATION_FLAG",
+        por."PRINCIPAL_OFFENCE_CATEGORY",
+        w."OFFENCE_TEXT",
+        s."SOF_TEXT",
+        aas."OAS_TEXT",
+        s."SL_SOF_TEXT",
+        w."SL_OFFENCE_TEXT",
+        aas."SL_OAS_TEXT",
+        CASE WHEN ad."CAN_BE_BULK" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        CASE WHEN ad."INITIAL_FEE_APPLICABLE" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        CASE WHEN ad."CONTESTED_FEE_APPLICABLE" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        ad."APPLICATION_SYNONYM",
+        CASE WHEN ad."EX_PARTE" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        ca."JURISDICTION",
+        CASE WHEN ca."APPEAL_FLAG" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        ca."SUMMONS_TEMPLATE_TYPE",
+        ca."LINK_TYPE",
+        ca."HEARING_CODE",
+        ca."APPLICANT_APPELLANT_FLAG",
+        CASE WHEN ca."PLEA_APPLICABLE_FLAG" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        ca."OFFENCE_ACTIVE_ORDER",
+        CASE WHEN ca."COMMR_OF_OATH_FLAG" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        CASE WHEN ca."COURT_OF_APPEAL_FLAG" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        CASE WHEN ca."COURT_EXTRACT_AVL_FLAG" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        ca."LISTING_NOTIF_TEMPLATE",
+        ca."BOXWORK_NOTIF_TEMPLATE",
+        CASE WHEN ca."PROSECUTOR_THIRD_PARTY_FLAG" ILIKE 'true' THEN TRUE ELSE FALSE END,
+        ca."RESENTENCING_ACTIVATION_CODE",
+        ca."PREFIX",
+        oh."CJS_CODE",
+        NULLIF(oh."OFFENCE_CODE",'')::NUMERIC,
+        NULLIF(poh."PNLD_OFFENCE_START_DATE",'')::DATE,
+        NULLIF(poh."PNLD_OFFENCE_END_DATE",'')::DATE,
+        r."OFFENCE_TYPE",
+        r."MIS_CLASSIFICATION",
+        xro."OFFENCE_CLASS",
+        xro."OBS_IND",
+        NULLIF(r."OFR_ID",'')::NUMERIC,
+	NULLIF(ca."CCA_ID",'')::NUMERIC,
+        NULLIF(xro."REF_OFFENCE_ID",'')::NUMERIC,
+        NULLIF(por."POR_ID",'')::NUMERIC,
+        NULLIF(ad."CAD_ID",'')::NUMERIC,
+        NULLIF(aas."OAS_ID",'')::NUMERIC,
+        NULLIF(w."OW_ID",'')::NUMERIC,
+        NULLIF(s."OSF_ID",'')::NUMERIC,
+        NULLIF(r."CHANGED_DATE",'')::TIMESTAMP,
+        NULLIF(r."CHANGED_BY",'')::NUMERIC,
+        ch.chosen_oh_id::NUMERIC,
+       CASE
+          WHEN UPPER(r."SOW_REFERENCE") = 'NSD'  THEN 'NSD'
+          WHEN UPPER(r."SOW_REFERENCE") = 'APPS' THEN 'APPS'
+          WHEN UPPER(r."SOW_REFERENCE") = 'MOJ'  THEN 'MOJ'
+       ELSE 'PNLD'
+       END,
+       CASE
+          WHEN r.rn_per_cjs = 1 THEN 'Initial'
+        ELSE 'New Revision'
+       END,
+       CASE 
+          WHEN r.rn_latest_from = 1 THEN TRUE
+         ELSE FALSE
+        END,
+CAST(te1."ENTRY_NUMBER" AS NUMERIC), CAST(te1."MIN" AS NUMERIC), CAST(te1."MAX" AS NUMERIC), te1."ENTRY_FORMAT", te1."ENTRY_PROMPT", te1."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te1."OTE_ID" AS NUMERIC),
+        CAST(te2."ENTRY_NUMBER" AS NUMERIC), CAST(te2."MIN" AS NUMERIC), CAST(te2."MAX" AS NUMERIC), te2."ENTRY_FORMAT", te2."ENTRY_PROMPT", te2."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te2."OTE_ID" AS NUMERIC),
+        CAST(te3."ENTRY_NUMBER" AS NUMERIC), CAST(te3."MIN" AS NUMERIC), CAST(te3."MAX" AS NUMERIC), te3."ENTRY_FORMAT", te3."ENTRY_PROMPT", te3."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te3."OTE_ID" AS NUMERIC),
+        CAST(te4."ENTRY_NUMBER" AS NUMERIC), CAST(te4."MIN" AS NUMERIC), CAST(te4."MAX" AS NUMERIC), te4."ENTRY_FORMAT", te4."ENTRY_PROMPT", te4."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te4."OTE_ID" AS NUMERIC),
+        CAST(te5."ENTRY_NUMBER" AS NUMERIC), CAST(te5."MIN" AS NUMERIC), CAST(te5."MAX" AS NUMERIC), te5."ENTRY_FORMAT", te5."ENTRY_PROMPT", te5."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te5."OTE_ID" AS NUMERIC),
+        CAST(te6."ENTRY_NUMBER" AS NUMERIC), CAST(te6."MIN" AS NUMERIC), CAST(te6."MAX" AS NUMERIC), te6."ENTRY_FORMAT", te6."ENTRY_PROMPT", te6."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te6."OTE_ID" AS NUMERIC),
+        CAST(te7."ENTRY_NUMBER" AS NUMERIC), CAST(te7."MIN" AS NUMERIC), CAST(te7."MAX" AS NUMERIC), te7."ENTRY_FORMAT", te7."ENTRY_PROMPT", te7."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te7."OTE_ID" AS NUMERIC),
+        CAST(te8."ENTRY_NUMBER" AS NUMERIC), CAST(te8."MIN" AS NUMERIC), CAST(te8."MAX" AS NUMERIC), te8."ENTRY_FORMAT", te8."ENTRY_PROMPT", te8."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te8."OTE_ID" AS NUMERIC),
+        CAST(te9."ENTRY_NUMBER" AS NUMERIC), CAST(te9."MIN" AS NUMERIC), CAST(te9."MAX" AS NUMERIC), te9."ENTRY_FORMAT", te9."ENTRY_PROMPT", te9."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te9."OTE_ID" AS NUMERIC),
+        CAST(te10."ENTRY_NUMBER" AS NUMERIC), CAST(te10."MIN" AS NUMERIC), CAST(te10."MAX" AS NUMERIC), te10."ENTRY_FORMAT", te10."ENTRY_PROMPT", te10."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te10."OTE_ID" AS NUMERIC),
+CAST(te11."ENTRY_NUMBER" AS NUMERIC), CAST(te11."MIN" AS NUMERIC), CAST(te11."MAX" AS NUMERIC), te11."ENTRY_FORMAT", te11."ENTRY_PROMPT", te11."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te11."OTE_ID" AS NUMERIC),
+CAST(te12."ENTRY_NUMBER" AS NUMERIC), CAST(te12."MIN" AS NUMERIC), CAST(te12."MAX" AS NUMERIC), te12."ENTRY_FORMAT", te12."ENTRY_PROMPT", te12."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te12."OTE_ID" AS NUMERIC),
+CAST(te13."ENTRY_NUMBER" AS NUMERIC), CAST(te13."MIN" AS NUMERIC), CAST(te13."MAX" AS NUMERIC), te13."ENTRY_FORMAT", te13."ENTRY_PROMPT", te13."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te13."OTE_ID" AS NUMERIC),
+CAST(te14."ENTRY_NUMBER" AS NUMERIC), CAST(te14."MIN" AS NUMERIC), CAST(te14."MAX" AS NUMERIC), te14."ENTRY_FORMAT", te14."ENTRY_PROMPT", te14."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te14."OTE_ID" AS NUMERIC),
+CAST(te15."ENTRY_NUMBER" AS NUMERIC), CAST(te15."MIN" AS NUMERIC), CAST(te15."MAX" AS NUMERIC), te15."ENTRY_FORMAT", te15."ENTRY_PROMPT", te15."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te15."OTE_ID" AS NUMERIC),
+CAST(te16."ENTRY_NUMBER" AS NUMERIC), CAST(te16."MIN" AS NUMERIC), CAST(te16."MAX" AS NUMERIC), te16."ENTRY_FORMAT", te16."ENTRY_PROMPT", te16."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te16."OTE_ID" AS NUMERIC),
+CAST(te17."ENTRY_NUMBER" AS NUMERIC), CAST(te17."MIN" AS NUMERIC), CAST(te17."MAX" AS NUMERIC), te17."ENTRY_FORMAT", te17."ENTRY_PROMPT", te17."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te17."OTE_ID" AS NUMERIC),
+CAST(te18."ENTRY_NUMBER" AS NUMERIC), CAST(te18."MIN" AS NUMERIC), CAST(te18."MAX" AS NUMERIC), te18."ENTRY_FORMAT", te18."ENTRY_PROMPT", te18."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te18."OTE_ID" AS NUMERIC),
+CAST(te19."ENTRY_NUMBER" AS NUMERIC), CAST(te19."MIN" AS NUMERIC), CAST(te19."MAX" AS NUMERIC), te19."ENTRY_FORMAT", te19."ENTRY_PROMPT", te19."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te19."OTE_ID" AS NUMERIC),
+CAST(te20."ENTRY_NUMBER" AS NUMERIC), CAST(te20."MIN" AS NUMERIC), CAST(te20."MAX" AS NUMERIC), te20."ENTRY_FORMAT", te20."ENTRY_PROMPT", te20."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te20."OTE_ID" AS NUMERIC),
+CAST(te21."ENTRY_NUMBER" AS NUMERIC), CAST(te21."MIN" AS NUMERIC), CAST(te21."MAX" AS NUMERIC), te21."ENTRY_FORMAT", te21."ENTRY_PROMPT", te21."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te21."OTE_ID" AS NUMERIC),
+CAST(te22."ENTRY_NUMBER" AS NUMERIC), CAST(te22."MIN" AS NUMERIC), CAST(te22."MAX" AS NUMERIC), te22."ENTRY_FORMAT", te22."ENTRY_PROMPT", te22."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te22."OTE_ID" AS NUMERIC),
+CAST(te23."ENTRY_NUMBER" AS NUMERIC), CAST(te23."MIN" AS NUMERIC), CAST(te23."MAX" AS NUMERIC), te23."ENTRY_FORMAT", te23."ENTRY_PROMPT", te23."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te23."OTE_ID" AS NUMERIC),
+CAST(te24."ENTRY_NUMBER" AS NUMERIC), CAST(te24."MIN" AS NUMERIC), CAST(te24."MAX" AS NUMERIC), te24."ENTRY_FORMAT", te24."ENTRY_PROMPT", te24."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te24."OTE_ID" AS NUMERIC),
+CAST(te25."ENTRY_NUMBER" AS NUMERIC), CAST(te25."MIN" AS NUMERIC), CAST(te25."MAX" AS NUMERIC), te25."ENTRY_FORMAT", te25."ENTRY_PROMPT", te25."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te25."OTE_ID" AS NUMERIC),
+CAST(te26."ENTRY_NUMBER" AS NUMERIC), CAST(te26."MIN" AS NUMERIC), CAST(te26."MAX" AS NUMERIC), te26."ENTRY_FORMAT", te26."ENTRY_PROMPT", te26."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te26."OTE_ID" AS NUMERIC),
+CAST(te27."ENTRY_NUMBER" AS NUMERIC), CAST(te27."MIN" AS NUMERIC), CAST(te27."MAX" AS NUMERIC), te27."ENTRY_FORMAT", te27."ENTRY_PROMPT", te27."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te27."OTE_ID" AS NUMERIC),
+CAST(te28."ENTRY_NUMBER" AS NUMERIC), CAST(te28."MIN" AS NUMERIC), CAST(te28."MAX" AS NUMERIC), te28."ENTRY_FORMAT", te28."ENTRY_PROMPT", te28."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te28."OTE_ID" AS NUMERIC),
+CAST(te29."ENTRY_NUMBER" AS NUMERIC), CAST(te29."MIN" AS NUMERIC), CAST(te29."MAX" AS NUMERIC), te29."ENTRY_FORMAT", te29."ENTRY_PROMPT", te29."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te29."OTE_ID" AS NUMERIC),
+CAST(te30."ENTRY_NUMBER" AS NUMERIC), CAST(te30."MIN" AS NUMERIC), CAST(te30."MAX" AS NUMERIC), te30."ENTRY_FORMAT", te30."ENTRY_PROMPT", te30."STANDARD_ENTRY_IDENTIFIER", FALSE, NULL, CAST(te30."OTE_ID" AS NUMERIC),
+mte1."pssotemenuid", mte2."pssotemenuid", mte3."pssotemenuid", mte4."pssotemenuid", mte5."pssotemenuid",
+    mte6."pssotemenuid", mte7."pssotemenuid", mte8."pssotemenuid", mte9."pssotemenuid", mte10."pssotemenuid",
+    mte11."pssotemenuid", mte12."pssotemenuid", mte13."pssotemenuid", mte14."pssotemenuid", mte15."pssotemenuid",
+    mte16."pssotemenuid", mte17."pssotemenuid", mte18."pssotemenuid", mte19."pssotemenuid", mte20."pssotemenuid",
+    mte21."pssotemenuid", mte22."pssotemenuid", mte23."pssotemenuid", mte24."pssotemenuid", mte25."pssotemenuid",
+    mte26."pssotemenuid", mte27."pssotemenuid", mte28."pssotemenuid", mte29."pssotemenuid", mte30."pssotemenuid"
+FROM revisions_with_version r
+    LEFT JOIN ext_stage.offence_statements_of_fact s ON r."OSF_OSF_ID" = s."OSF_ID"
+    LEFT JOIN ext_stage.offence_wordings w ON r."OW_OW_ID" = w."OW_ID"
+    LEFT JOIN ext_stage.offence_acts_and_sections aas ON r."OAS_OAS_ID" = aas."OAS_ID"
+    LEFT JOIN ext_stage.cpp_civil_applications ca ON r."OFR_ID" = ca."OFR_OFR_ID"
+    LEFT JOIN ext_stage.cpp_applications_data ad ON r."OFR_ID" = ad."OFR_OFR_ID"
+    LEFT JOIN ext_stage.cpp_pnld_offence_revisions por ON r."OFR_ID" = por."OFR_OFR_ID"
+    LEFT JOIN ext_stage.offence_headers oh ON r."OH_OH_ID" = oh."OH_ID"
+    LEFT JOIN chosen_header ch ON oh."CJS_CODE" = ch."CJS_CODE"
+    LEFT JOIN ext_stage.cpp_pnld_offence_headers poh ON oh."OH_ID" = poh."OH_OH_ID"
+    LEFT JOIN ext_stage.pss_xhb_ref_offence xro ON oh."OFFENCE_CODE" = xro."REF_OFFENCE_ID"
+    LEFT JOIN ranked_terminal_entries te1  ON r."OFR_ID" = te1."OFR_OFR_ID" AND te1.rn = 1
+    LEFT JOIN ranked_terminal_entries te2  ON r."OFR_ID" = te2."OFR_OFR_ID" AND te2.rn = 2
+LEFT JOIN ranked_terminal_entries te3  ON r."OFR_ID" = te3."OFR_OFR_ID" AND te3.rn = 3
+LEFT JOIN ranked_terminal_entries te4  ON r."OFR_ID" = te4."OFR_OFR_ID" AND te4.rn = 4
+LEFT JOIN ranked_terminal_entries te5  ON r."OFR_ID" = te5."OFR_OFR_ID" AND te5.rn = 5
+LEFT JOIN ranked_terminal_entries te6  ON r."OFR_ID" = te6."OFR_OFR_ID" AND te6.rn = 6
+LEFT JOIN ranked_terminal_entries te7  ON r."OFR_ID" = te7."OFR_OFR_ID" AND te7.rn = 7
+LEFT JOIN ranked_terminal_entries te8  ON r."OFR_ID" = te8."OFR_OFR_ID" AND te8.rn = 8
+LEFT JOIN ranked_terminal_entries te9  ON r."OFR_ID" = te9."OFR_OFR_ID" AND te9.rn = 9
+LEFT JOIN ranked_terminal_entries te10 ON r."OFR_ID" = te10."OFR_OFR_ID" AND te10.rn = 10
+LEFT JOIN ranked_terminal_entries te11 ON r."OFR_ID" = te11."OFR_OFR_ID" AND te11.rn = 11
+LEFT JOIN ranked_terminal_entries te12 ON r."OFR_ID" = te12."OFR_OFR_ID" AND te12.rn = 12
+LEFT JOIN ranked_terminal_entries te13 ON r."OFR_ID" = te13."OFR_OFR_ID" AND te13.rn = 13
+LEFT JOIN ranked_terminal_entries te14 ON r."OFR_ID" = te14."OFR_OFR_ID" AND te14.rn = 14
+LEFT JOIN ranked_terminal_entries te15 ON r."OFR_ID" = te15."OFR_OFR_ID" AND te15.rn = 15
+LEFT JOIN ranked_terminal_entries te16 ON r."OFR_ID" = te16."OFR_OFR_ID" AND te16.rn = 16
+LEFT JOIN ranked_terminal_entries te17 ON r."OFR_ID" = te17."OFR_OFR_ID" AND te17.rn = 17
+LEFT JOIN ranked_terminal_entries te18 ON r."OFR_ID" = te18."OFR_OFR_ID" AND te18.rn = 18
+LEFT JOIN ranked_terminal_entries te19 ON r."OFR_ID" = te19."OFR_OFR_ID" AND te19.rn = 19
+LEFT JOIN ranked_terminal_entries te20 ON r."OFR_ID" = te20."OFR_OFR_ID" AND te20.rn = 20
+LEFT JOIN ranked_terminal_entries te21 ON r."OFR_ID" = te21."OFR_OFR_ID" AND te21.rn = 21
+LEFT JOIN ranked_terminal_entries te22 ON r."OFR_ID" = te22."OFR_OFR_ID" AND te22.rn = 22
+LEFT JOIN ranked_terminal_entries te23 ON r."OFR_ID" = te23."OFR_OFR_ID" AND te23.rn = 23
+LEFT JOIN ranked_terminal_entries te24 ON r."OFR_ID" = te24."OFR_OFR_ID" AND te24.rn = 24
+LEFT JOIN ranked_terminal_entries te25 ON r."OFR_ID" = te25."OFR_OFR_ID" AND te25.rn = 25
+LEFT JOIN ranked_terminal_entries te26 ON r."OFR_ID" = te26."OFR_OFR_ID" AND te26.rn = 26
+LEFT JOIN ranked_terminal_entries te27 ON r."OFR_ID" = te27."OFR_OFR_ID" AND te27.rn = 27
+LEFT JOIN ranked_terminal_entries te28 ON r."OFR_ID" = te28."OFR_OFR_ID" AND te28.rn = 28
+LEFT JOIN ranked_terminal_entries te29 ON r."OFR_ID" = te29."OFR_OFR_ID" AND te29.rn = 29
+LEFT JOIN ranked_terminal_entries te30 ON r."OFR_ID" = te30."OFR_OFR_ID" AND te30.rn = 30
+LEFT JOIN csds."migratedOTEMenus" mte1  ON te1."OM_OM_ID"::NUMERIC  = mte1."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte2  ON te2."OM_OM_ID"::NUMERIC  = mte2."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte3  ON te3."OM_OM_ID"::NUMERIC  = mte3."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte4  ON te4."OM_OM_ID"::NUMERIC  = mte4."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte5  ON te5."OM_OM_ID"::NUMERIC  = mte5."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte6  ON te6."OM_OM_ID"::NUMERIC  = mte6."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte7  ON te7."OM_OM_ID"::NUMERIC  = mte7."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte8  ON te8."OM_OM_ID"::NUMERIC  = mte8."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte9  ON te9."OM_OM_ID"::NUMERIC  = mte9."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte10 ON te10."OM_OM_ID"::NUMERIC = mte10."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte11 ON te11."OM_OM_ID"::NUMERIC = mte11."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte12 ON te12."OM_OM_ID"::NUMERIC = mte12."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte13 ON te13."OM_OM_ID"::NUMERIC = mte13."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte14 ON te14."OM_OM_ID"::NUMERIC = mte14."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte15 ON te15."OM_OM_ID"::NUMERIC = mte15."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte16 ON te16."OM_OM_ID"::NUMERIC = mte16."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte17 ON te17."OM_OM_ID"::NUMERIC = mte17."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte18 ON te18."OM_OM_ID"::NUMERIC = mte18."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte19 ON te19."OM_OM_ID"::NUMERIC = mte19."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte20 ON te20."OM_OM_ID"::NUMERIC = mte20."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte21 ON te21."OM_OM_ID"::NUMERIC = mte21."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte22 ON te22."OM_OM_ID"::NUMERIC = mte22."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte23 ON te23."OM_OM_ID"::NUMERIC = mte23."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte24 ON te24."OM_OM_ID"::NUMERIC = mte24."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte25 ON te25."OM_OM_ID"::NUMERIC = mte25."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte26 ON te26."OM_OM_ID"::NUMERIC = mte26."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte27 ON te27."OM_OM_ID"::NUMERIC = mte27."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte28 ON te28."OM_OM_ID"::NUMERIC = mte28."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte29 ON te29."OM_OM_ID"::NUMERIC = mte29."om_id"
+LEFT JOIN csds."migratedOTEMenus" mte30 ON te30."OM_OM_ID"::NUMERIC = mte30."om_id";
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error occurred. Rolling back load %', v_load_id;
+        RAISE;
+END;
+$procedure$
+;
