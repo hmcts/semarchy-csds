@@ -3,14 +3,15 @@
 CREATE OR REPLACE PROCEDURE csds.proc_clone_offence_headers(v_currentloadid numeric, v_username character varying)
  LANGUAGE plpgsql
 AS $procedure$
+
 DECLARE
     rec             record;
     v_rows          integer;
     v_new_header_id numeric;
 BEGIN
-    -- Create new headers based on the original headers for all revisions in sa context
-    RAISE NOTICE 'Cloning headers for load id % by %', v_currentloadid, v_username;
-	INSERT INTO _tmp (message) VALUES ('test');
+
+-- Create new headers based on the original headers for all revisions in sa context
+    RAISE NOTICE 'Cloning headers for load id % by %', v_currentloadid, v_username;	
     FOR rec IN
         SELECT
             rev.ofr_id,
@@ -18,14 +19,6 @@ BEGIN
             head.oh_id                AS old_header_id,
             head.b_classname,
             head.b_batchid,
-            head.cjs_code,
-            head.version_number,
-            head.area,
-            head."blocked",
-			head.changed_by,
-            head.f_change_set_header,
-            head.f_offence_header_status,
-            head.f_offnc_hdrs_ref_offnc,
             head.pnld_start_date,
             head.pnld_end_date
         FROM csds.sa_offence_revision rev
@@ -42,15 +35,6 @@ BEGIN
             b_upddate,
             b_creator,
             b_updator,
-            cjs_code,
-            version_number,
-            changed_by,
-            changed_date,
-            area,
-            "blocked",
-            f_change_set_header,
-            f_offence_header_status,
-            f_offnc_hdrs_ref_offnc,
             pnld_start_date,
             pnld_end_date
         )
@@ -62,21 +46,13 @@ BEGIN
             now(),
             v_username,
             v_username,
-            rec.cjs_code,
-            rec.version_number,
-            rec.changed_by,
-            now(),
-            rec.area,
-            rec."blocked",
-            rec.f_change_set_header,
-            rec.f_offence_header_status,
-            rec.f_offnc_hdrs_ref_offnc,
             rec.pnld_start_date,
             rec.pnld_end_date
         )
         RETURNING oh_id INTO v_new_header_id;
 
         -- Point revision to new header
+		-- and clear the cloned from field
         UPDATE csds.sa_offence_revision
         SET f_offence_header = v_new_header_id
         WHERE ofr_id = rec.ofr_id;
@@ -84,6 +60,13 @@ BEGIN
         RAISE NOTICE 'Revision %: old header %, new header %',
             rec.ofr_id, rec.old_header_id, v_new_header_id;
     END LOOP;
+	
+	/*Clear cloned_by - commented out by SM on 06/03/2026 */
+    -- UPDATE csds.sa_offence_revision
+    -- SET    cloned_from = NULL
+    -- WHERE b_loadid = v_currentloadid;
+	
+	
 END;
 $procedure$
 ;

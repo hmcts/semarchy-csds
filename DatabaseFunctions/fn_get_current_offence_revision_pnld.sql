@@ -23,7 +23,7 @@ BEGIN
         SELECT cjs_code
           INTO v_cjs_code
         FROM csds.gd_offence_revision
-        WHERE sow_ref = v_code
+        WHERE sow_reference = v_code
         ORDER BY ofr_id DESC
         LIMIT 1;
 

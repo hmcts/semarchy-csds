@@ -1,39 +1,57 @@
--- DROP FUNCTION csds.fn_create_offence_header(varchar, numeric, varchar);
-
-CREATE OR REPLACE FUNCTION csds.fn_create_offence_header(v_username character varying, v_loadid numeric, v_offence_status character varying)
- RETURNS numeric
- LANGUAGE plpgsql
+-- DROP FUNCTION csds.fn_create_offence_header(text,bigint,text);
+-- Commented statement that could be used to drop an old procedure if it existed
+CREATE OR REPLACE FUNCTION csds.fn_create_offence_header(
+	v_cjs_code	text,		-- CJS code used to identify the offence
+	v_batchid  	bigint,		-- Batch ID used for processing
+    v_username 	text		-- Username of the person or process creating the record
+)
+RETURNS numeric				-- Function returns the offence header ID
+LANGUAGE plpgsql
 AS $function$
 DECLARE
-    v_oh_id numeric;
+	
+	v_oh_id integer;		 -- Variable to store the offence header ID
+
 BEGIN
-    -- Generate next sequence value for OH_ID
-    v_oh_id := nextval('csds.seq_offence_header');
 
-    -- Insert new offence header record
-    INSERT INTO csds.gd_offence_header (
-        oh_id,
-        b_classname,
-        b_batchid,
-        b_credate,
-        b_upddate,
-        b_creator,
-        b_updator,
-        f_offence_header_status
-    )
-    VALUES (
-        v_oh_id,
-        'OffenceHeader',
-        v_loadid,
-        now(),
-        now(),
-        v_username,
-        v_username,
-        v_offence_status
-       );
+	-- Attempt to retrieve an existing offence header ID associated with the provided CJS code
+    SELECT DISTINCT goh.oh_id INTO v_oh_id
+      FROM      csds.sa_offence_revision  sor			-- Source Offence revision table
+      LEFT JOIN csds.gd_offence_revision  gor			-- Golden Offence revision table
+	         ON sor.cjs_code = gor.cjs_code
+	  LEFT JOIN csds.gd_offence_header 	  goh			-- Golden Offence header table
+	         ON gor.f_offence_header = goh.oh_id
+	 WHERE sor.cjs_code = v_cjs_code;					-- Filter by the input CJS code
+    
+	
+	-- If no Offence header ID was found, create a new one
+	IF v_oh_id IS NULL THEN
+		
+		-- Insert a new Offence header record
+        INSERT INTO csds.gd_offence_header (
+            oh_id,
+            b_classname,
+            b_batchid,
+            b_credate,
+            b_upddate,
+            b_creator,
+            b_updator
+        )
+        VALUES (
+            nextval('csds.seq_offence_header'),
+            'OffenceHeader',
+            v_batchid,
+            now(),
+            now(),
+            v_username,
+            v_username
+        )
+        RETURNING oh_id INTO v_oh_id;					-- Store the generated OH_ID into variable
+		
+	END IF;
+-- Return the Offence header ID (existing or newly created)
+RETURN v_oh_id;
 
-    -- Return the OH_ID that was inserted
-    RETURN v_oh_id;
 END;
 $function$
 ;
