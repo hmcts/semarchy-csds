@@ -1,0 +1,150 @@
+[
+  {
+    "name": "SourceFileLandedNotification",
+    "description": "Notification trigger by the upload of XML into Source File",
+    "lowBatchId": "1",
+    "namedQuery": "LandedSourceFile",
+    "runAsUser": "semadmin",
+    "namedQueryViewType": "GD",
+    "rootRecordsLimit": "1000",
+    "namedQueryParams": {
+      "CURRENT_BATCH": {
+        "type": "VARIABLE",
+        "value": "HIGH_BATCH_ID"
+      },
+      "PREVIOUS_BATCH": {
+        "type": "VARIABLE",
+        "value": "LOW_BATCH_ID"
+      }
+    },
+    "triggerActive": true,
+    "triggerType": "ON_BATCH_COMPLETE",
+    "cronExpression": "0 0 0 ? * * *",
+    "watchedEntities": [],
+    "recordsPerMessage": "1000",
+    "notifyOnEmptyDataset": false,
+    "maxRetries": "1",
+    "retryInterval": "60",
+    "targetType": "REST",
+    "targetProperties": {},
+    "jms": {},
+    "kafka": {},
+    "rest": {
+      "requestUrl": "https://example.placeholder/pnld_process",
+      "httpTimeout": "60"
+    }
+  },
+  {
+    "name": "SourceZIPLandedNotification",
+    "description": "Notification trigger by the upload of ZIP into Source ZIP",
+    "lowBatchId": "1",
+    "namedQuery": "LandedSourceZIP",
+    "runAsUser": "semadmin",
+    "namedQueryViewType": "GD",
+    "rootRecordsLimit": "1000",
+    "namedQueryParams": {
+      "CURRENT_BATCH": {
+        "type": "VARIABLE",
+        "value": "HIGH_BATCH_ID"
+      },
+      "PREVIOUS_BATCH": {
+        "type": "VARIABLE",
+        "value": "LOW_BATCH_ID"
+      }
+    },
+    "triggerActive": true,
+    "triggerType": "ON_BATCH_COMPLETE",
+    "cronExpression": "0 0 0 ? * * *",
+    "watchedEntities": [],
+    "recordsPerMessage": "1000",
+    "notifyOnEmptyDataset": false,
+    "maxRetries": "1",
+    "retryInterval": "60",
+    "targetType": "REST",
+    "targetProperties": {},
+    "jms": {},
+    "kafka": {},
+    "rest": {
+      "requestUrl": "https://example.placeholder/zip_extract",
+      "httpTimeout": "60"
+    }
+  },
+  {
+    "name": "UrgentReleasePackageDataNotification",
+    "description": "Notification Trigger when a Release Package is set to Publish to Live and is Urgent",
+    "lowBatchId": "1",
+    "namedQuery": "PostReleasePackagePublishToLive",
+    "runAsUser": "semadmin",
+    "namedQueryViewType": "GD",
+    "rootRecordsLimit": "1000",
+    "namedQueryParams": {
+      "CURRENT_BATCH": {
+        "type": "VARIABLE",
+        "value": "HIGH_BATCH_ID"
+      },
+      "PREVIOUS_BATCH": {
+        "type": "VARIABLE",
+        "value": "LOW_BATCH_ID"
+      },
+      "URGENT": {
+        "type": "LITERAL",
+        "value": "Yes"
+      }
+    },
+    "triggerActive": true,
+    "triggerType": "ON_BATCH_COMPLETE",
+    "cronExpression": "0 0 0 ? * * *",
+    "watchedEntities": [],
+    "recordsPerMessage": "1000",
+    "notifyOnEmptyDataset": false,
+    "maxRetries": "1",
+    "retryInterval": "60",
+    "targetType": "REST",
+    "targetProperties": {},
+    "jms": {},
+    "kafka": {},
+    "rest": {
+      "requestUrl": "https://example.placeholder/start/NonPSSOrchestrator",
+      "httpTimeout": "60"
+    }
+  },
+  {
+    "name": "OvernightReleasePackageDataNotification",
+    "description": "Notification Triggered every night identifying Release Packages that are set to Publish to Live and are not Urgent with a Publish Date in the past",
+    "lowBatchId": "1",
+    "namedQuery": "PostReleasePackagePublishToLive",
+    "runAsUser": "semadmin",
+    "namedQueryViewType": "GD",
+    "rootRecordsLimit": "1000",
+    "namedQueryParams": {
+      "CURRENT_BATCH": {
+        "type": "VARIABLE",
+        "value": "HIGH_BATCH_ID"
+      },
+      "PREVIOUS_BATCH": {
+        "type": "VARIABLE",
+        "value": "LOW_BATCH_ID"
+      },
+      "URGENT": {
+        "type": "LITERAL",
+        "value": "No"
+      }
+    },
+    "triggerActive": true,
+    "triggerType": "ON_SCHEDULE",
+    "cronExpression": "0 0 0 ? * * *",
+    "watchedEntities": [],
+    "recordsPerMessage": "1000",
+    "notifyOnEmptyDataset": false,
+    "maxRetries": "1",
+    "retryInterval": "60",
+    "targetType": "REST",
+    "targetProperties": {},
+    "jms": {},
+    "kafka": {},
+    "rest": {
+      "requestUrl": "https://example.placeholder/start/NonPSSOrchestrator",
+      "httpTimeout": "60"
+    }
+  }
+]
